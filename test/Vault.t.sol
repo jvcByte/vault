@@ -131,6 +131,21 @@ contract VaultTest is Test {
 
     }
 
+    function test_Withdraw() public {
+
+        vm.prank(jvc);
+        vault.deposit(10e2, jvc);
+        console.log("Vault balance: ", erc20.balanceOf(address(vault)));
+        console.log("JVC balance: ", erc20.balanceOf(jvc));
+
+        vm.prank(jvc);
+        vault.withdraw(10e2, jvc, jvc);
+        console.log("Vault balance: ", erc20.balanceOf(address(vault)));
+        console.log("JVC balance: ", erc20.balanceOf(jvc));
+
+        
+    }
+
     function test_EmergencyWithdraw() public {
         uint256 depositAmount = 100e18;
 
