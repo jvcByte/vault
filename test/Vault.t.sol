@@ -131,5 +131,64 @@ contract VaultTest is Test {
 
     }
 
+    function test_EmergencyWithdraw() public {
+        uint256 depositAmount = 100e18;
+
+        vm.prank(jvc);
+        vault.deposit(depositAmount, jvc);
+
+        vm.prank(ife);
+        vault.deposit(depositAmount, ife);
+
+        vm.prank(susan);
+        vault.deposit(depositAmount, susan);
+
+        vm.prank(owner);
+        vault.enableEmergencyMode();
+        assertEq(vault.emergencyMode(), true);
+
+        // --- JVC withdraw ---
+        uint256 tsBefore = vault.totalSupply();
+        uint256 taBefore = vault.totalAssets();
+        uint256 jvcShares = vault.balanceOf(jvc);
+        uint256 jvcAssets = vault.convertToAssets(jvcShares);
+        vm.prank(jvc);
+        vault.emergencyWithdraw();
+        assertEq(vault.balanceOf(jvc), 0);
+        assertEq(vault.totalSupply(), tsBefore - jvcShares);
+        assertEq(vault.totalAssets(), taBefore - jvcAssets);
+        assertEq(erc20.balanceOf(address(vault)), vault.totalAssets());
+        assertEq(erc20.balanceOf(jvc), INITIAL_BALANCE);
+
+
+        // --- IFE withdraw ---
+        tsBefore = vault.totalSupply();
+        taBefore = vault.totalAssets();
+        uint256 ifeShares = vault.balanceOf(ife);
+        uint256 ifeAssets = vault.convertToAssets(ifeShares);
+        vm.prank(ife);
+        vault.emergencyWithdraw();
+        assertEq(vault.balanceOf(ife), 0);
+        assertEq(vault.totalSupply(), tsBefore - ifeShares);
+        assertEq(vault.totalAssets(), taBefore - ifeAssets);
+        assertEq(erc20.balanceOf(address(vault)), vault.totalAssets());
+        assertEq(erc20.balanceOf(ife), INITIAL_BALANCE);
+
+        // --- SUSAN withdraw ---
+        tsBefore = vault.totalSupply();
+        taBefore = vault.totalAssets();
+        uint256 susanShares = vault.balanceOf(susan);
+        uint256 susanAssets = vault.convertToAssets(susanShares);
+        vm.prank(susan);
+        vault.emergencyWithdraw();
+        assertEq(vault.balanceOf(susan), 0);
+        assertEq(vault.totalSupply(), tsBefore - susanShares);
+        assertEq(vault.totalAssets(), taBefore - susanAssets);
+        assertEq(erc20.balanceOf(address(vault)), vault.totalAssets());
+        assertEq(erc20.balanceOf(susan), INITIAL_BALANCE);
+        
+    }
+
+
 
 }
