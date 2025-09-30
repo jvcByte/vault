@@ -47,7 +47,7 @@ contract VaultHandler is Test {
         uint256 shares = vault.balanceOf(user);
         amount = bound(amount, 1e18, shares);
 
-        if(Shares == 0) return;
+        if(shares == 0) return;
 
         vm.startPrank(user);
         try vault.withdraw(amount, user, user) {
@@ -65,7 +65,7 @@ contract VaultHandler is Test {
         uint256 shares = vault.balanceOf(user);
         amount = bound(amount, 1e18, shares);
 
-        if(Shares == 0) return;
+        if(shares == 0) return;
 
         vm.startPrank(user);
         try vault.redeem(amount, user, user) { 
